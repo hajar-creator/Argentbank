@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import SignInPage from "./pages/SignInPage";
 import UserPage from "./pages/UserPage";
 import ErrorPage from "./pages/ErrorPage";
+import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
@@ -13,6 +14,14 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/sign-in" element={<SignInPage />} />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <UserPage />
+            </PrivateRoute>
+          }
+        />
         <Route path="/user" element={<UserPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
