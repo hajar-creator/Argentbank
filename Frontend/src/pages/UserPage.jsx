@@ -1,19 +1,29 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import Account from "../components/Account";
+import Form from "../components/Form";
 
 const UserPage = () => {
-  // Récupération des informations utilisateur depuis le store Redux
   const { user } = useSelector((state) => state.user);
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <main className="main bg-dark">
       <div className="header">
-        <h1>
-          Welcome back
-          <br />
-          {user?.firstName} {user?.lastName}!
-        </h1>
-        <button className="edit-button">Edit Name</button>
+        {!isEditing ? (
+          <>
+            <h1>
+              Welcome back
+              <br />
+              {user?.firstName} {user?.lastName}!
+            </h1>
+            <button className="edit-button" onClick={() => setIsEditing(true)}>
+              Edit Name
+            </button>
+          </>
+        ) : (
+          <Form onCancel={() => setIsEditing(false)} />
+        )}
       </div>
       <Account
         title="Argent Bank Checking (x8349)"

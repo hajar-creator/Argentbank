@@ -39,6 +39,23 @@ export const fetchUserProfile = createAsyncThunk(
   }
 );
 
+// Thunk pour mettre à jour le profil utilisateur
+export const updateUserProfile = createAsyncThunk(
+  "user/updateProfile",
+  async ({ token, userName }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/user/profile`,
+        { userName },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data.body; // Récupère le profil mis à jour
+    } catch (error) {
+      return rejectWithValue(error.response.data.message || "Update failed");
+    }
+  }
+);
+
 // Slice utilisateur
 const userSlice = createSlice({
   name: "user",
@@ -78,6 +95,18 @@ const userSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload; // Met à jour le profil utilisateur dans le store
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
