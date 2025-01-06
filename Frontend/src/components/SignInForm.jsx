@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; // Importez useNavigate
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../slices/userSlice";
 
 const SignInForm = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialisez useNavigate
-  const { user, loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  const { token, status, error } = useSelector((state) => state.user);
 
   // État local pour capturer l'email et le mot de passe
   const [email, setEmail] = useState("");
@@ -15,15 +16,15 @@ const SignInForm = () => {
   // Gestion de la soumission du formulaire
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(email, password));
+    dispatch(loginUser({ email, password }));
   };
 
   // Redirection après connexion réussie
   useEffect(() => {
-    if (user) {
-      navigate("/user"); // Redirigez l'utilisateur vers la page de profil
+    if (token) {
+      navigate("/user");
     }
-  }, [user, navigate]);
+  }, [token, navigate]);
 
   return (
     <div className="sign-in-content">
@@ -56,8 +57,12 @@ const SignInForm = () => {
           <input type="checkbox" id="remember-me" />
           <label htmlFor="remember-me">Remember me</label>
         </div>
-        <button className="sign-in-button" type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Sign In"}
+        <button
+          className="sign-in-button"
+          type="submit"
+          disabled={status === "loading"}
+        >
+          {status === "loading" ? "Logging in..." : "Sign In"}
         </button>
       </form>
     </div>

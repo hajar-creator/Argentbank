@@ -15,14 +15,13 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route
-          path="/profile"
+          path="/user"
           element={
             <PrivateRoute>
               <UserPage />
             </PrivateRoute>
           }
         />
-        <Route path="/user" element={<UserPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
       <Footer />
