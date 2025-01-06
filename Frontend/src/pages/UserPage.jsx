@@ -1,13 +1,17 @@
+import { useSelector } from "react-redux";
 import Account from "../components/Account";
 
 const UserPage = () => {
+  // Récupération des informations utilisateur depuis le store Redux
+  const { user } = useSelector((state) => state.user);
+
   return (
     <main className="main bg-dark">
       <div className="header">
         <h1>
           Welcome back
           <br />
-          Tony Jarvis!
+          {user?.firstName} {user?.lastName}!
         </h1>
         <button className="edit-button">Edit Name</button>
       </div>

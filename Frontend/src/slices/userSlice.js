@@ -13,9 +13,28 @@ export const loginUser = createAsyncThunk(
         email,
         password,
       });
-      return response.data.body.token; // On ne garde que le token
+      return response.data.body.token; // On récupère le token
     } catch (error) {
       return rejectWithValue(error.response.data.message || "Login failed");
+    }
+  }
+);
+
+// Thunk pour récupérer le profil utilisateur
+export const fetchUserProfile = createAsyncThunk(
+  "user/fetchProfile",
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.body; // Récupère les infos utilisateur
+    } catch (error) {
+      return rejectWithValue(
+        error.response.data.message || "Profile fetch failed"
+      );
     }
   }
 );
@@ -25,12 +44,14 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     token: null,
+    user: null,
     error: null,
     status: "idle",
   },
   reducers: {
     logout: (state) => {
       state.token = null;
+      state.user = null;
       state.error = null;
       state.status = "idle";
     },
@@ -48,10 +69,20 @@ const userSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
   },
 });
 
 export const { logout } = userSlice.actions;
-
 export default userSlice.reducer;
